@@ -3,7 +3,7 @@ const bodyParser = require('body-parser');
 const request = require('request');
 const app = express();
 
-const PAGE_ACCESS_TOKEN = 'EAAMMIEgswYQBO1EThsRdFqyhIMWRIFqZAd9vGtZCTHPs7DkkLk5pLHf9krlZBw8Kb18wMwV61rZA7b7TnKlfXRYqNDNuQ7mVfZBGMZBPblPWaX0f7O15THkXXyMXAj8EYb91esKIZAUXvpr5ZAMNnUKZAOZBlMz6ZCxf5kkPfhEyeXZBkDnja2FMC81ZCPlrheKAI6fYPWVPrgACkCgZDZD';
+const PAGE_ACCESS_TOKEN = 'YOUR_PAGE_ACCESS_TOKEN';
 const VERIFY_TOKEN = 'pageai';
 
 app.use(bodyParser.json());
@@ -33,9 +33,9 @@ app.post('/webhook', (req, res) => {
             let sender_psid = webhook_event.sender.id;
 
             if (webhook_event.message) {
-                handleMessage(sender_psid, webhook_event.message);
+                verifyUserRole(sender_psid, () => handleMessage(sender_psid, webhook_event.message));
             } else if (webhook_event.postback) {
-                handlePostback(sender_psid, webhook_event.postback);
+                verifyUserRole(sender_psid, () => handlePostback(sender_psid, webhook_event.postback));
             }
         });
 
@@ -44,6 +44,13 @@ app.post('/webhook', (req, res) => {
         res.sendStatus(404);
     }
 });
+
+// Verify if the user has roles in the app
+function verifyUserRole(sender_psid, callback) {
+    // Implement your own logic to verify user roles
+    // For demonstration purposes, let's assume all users have roles
+    callback();
+}
 
 function handleMessage(sender_psid, received_message) {
     let response;
@@ -125,4 +132,6 @@ function callSendAPI(sender_psid, response) {
     });
 }
 
-app.listen(process.env.PORT || 1337, () => console.log('Webhook is listening'));
+app.listen(process.env.PORT || 3000, () => console.log('Webhook is listening'));
+
+module.exports = app;
